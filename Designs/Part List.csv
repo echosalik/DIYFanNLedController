@@ -1,0 +1,48 @@
+Partlist
+
+Exported from Controller.sch at 12/24/2016 2:46 PM
+
+EAGLE Version 7.5.0 Copyright (c) 1988-2015 CadSoft
+
+Assembly variant: 
+
+Part          Value          Device          Package      Library                     Sheet
+
+C1            22pF           C-US050-025X075 C050-025X075 adafruit                    1
+C2            22pF           C-US050-025X075 C050-025X075 adafruit                    1
+C3            10uF           C-US050-025X075 C050-025X075 adafruit                    1
+D1                           DIODEDO-1N4148  DO-1N4148    adafruit                    1
+D2                           DIODEDO-1N4148  DO-1N4148    adafruit                    1
+FAN_PWM1_1                   PINHD-1X3       1X03         pinhead                     1
+FAN_PWM1_2                   PINHD-1X3       1X03         pinhead                     1
+FAN_PWM2_1                   PINHD-1X3       1X03         pinhead                     1
+FAN_PWM2_2                   PINHD-1X3       1X03         pinhead                     1
+IC1           REG1117        REG1117         SOT223       burr-brown                  1
+LCD1                         LCD1202         NOKIA1202LCD lcd1202                     1
+LED_CONNECTOR                PINHD-1X4       1X04         pinhead                     1
+POWER-FLOPPY                 PINHD-1X4       1X04         pinhead                     1
+Q1            16MHz          CRYSTALHC49S    HC49/S       crystal                     1
+R1            10K            R-US_0207/10    0207/10      adafruit                    1
+R2            10K            R-US_0207/10    0207/10      adafruit                    1
+R3            10K            R-US_0207/10    0207/10      adafruit                    1
+R4            100R           R-US_0207/10    0207/10      adafruit                    1
+R5            1K7            R-US_0207/10    0207/10      adafruit                    1
+R6            1K7            R-US_0207/10    0207/10      adafruit                    1
+R7            1K7            R-US_0207/10    0207/10      adafruit                    1
+R8            1K7            R-US_0207/10    0207/10      adafruit                    1
+R9            10K            R-US_0207/10    0207/10      adafruit                    1
+R10           10K            R-US_0207/10    0207/10      adafruit                    1
+R11           10K            R-US_0207/10    0207/10      adafruit                    1
+R12           10K            R-US_0207/10    0207/10      adafruit                    1
+R13           1K             R-US_0207/10    0207/10      adafruit                    1
+R14           1K             R-US_0207/10    0207/10      adafruit                    1
+R15           1K             R-US_0207/10    0207/10      adafruit                    1
+R16           1K             R-US_0207/10    0207/10      adafruit                    1
+R17           1K             R-US_0207/10    0207/10      adafruit                    1
+T1            BD139          BD139           TO126        transistor                  1
+T2            BD139          BD139           TO126        transistor                  1
+T3            BD139          BD139           TO126        transistor                  1
+T4            BD139          BD139           TO126        transistor                  1
+T5            BD139          BD139           TO126        transistor                  1
+U1            328P           ATMEGA328P_PDIP DIP28        SparkFun-IC-Microcontroller 1
+USB-TTL                      PINHD-1X4       1X04         pinhead                     1
