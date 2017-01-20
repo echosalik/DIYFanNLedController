@@ -1,6 +1,8 @@
 # DIYFanNLedController
 A software and hardware design for custom modding your PC case with a DIY Fan/LED Contrller
 
+Work is still in progress, there are errors and bugs that are to be dealt with.
+
 This project needs OpenHardwareMonitor to work. This software provides all the information to the VS Software.
 http://openhardwaremonitor.org/
 
