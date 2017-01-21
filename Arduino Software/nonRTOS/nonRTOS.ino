@@ -98,7 +98,6 @@ void serialEvent() {
       }
       Serial.readStringUntil(';');
     } else if (main == "stat") {
-      Serial.println(main);
       for (int i = 0; i < 2; i++) {
         data = Serial.readStringUntil(':');
         if (data == "load") {
@@ -114,8 +113,8 @@ void serialEvent() {
             temp[j] = data.toInt();
             data = "";
           }
+          Serial.readStringUntil(';');
         }
-        Serial.readStringUntil(';');
       }
     }
   }
