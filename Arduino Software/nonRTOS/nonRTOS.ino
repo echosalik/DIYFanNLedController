@@ -75,12 +75,14 @@ void serialEvent() {
       int type = Serial.readStringUntil(':').toInt();
       led_type = type;
       if (type == 1) {
+        Serial.println("LED TYPE: "+led_type);
         for (int i = 0; i < 6; i++) {
           data = Serial.readStringUntil(',');
+          Serial.println(data);
           if (i < 3) {
             led[0][i] = data.toInt();
           } else {
-            led[0][i - 3] = data.toInt();
+            led[1][i - 3] = data.toInt();
           }
           data = "";
         }
@@ -200,7 +202,7 @@ void printTemps(int cputemp, int gputemp) {
 
 void generateGradient() {
   Serial.println("GENERATING GRADIENT...");
-  int m[3];
+  float m[3];
   int r, g, b;
   m[0] = (led[1][0] - led[0][0]) / SAMPLE;
   m[1] = (led[1][1] - led[0][1]) / SAMPLE;
@@ -223,13 +225,13 @@ void rollColor() {
     analogWrite(LEDR, gradient[i][0]);
     analogWrite(LEDG, gradient[i][1]);
     analogWrite(LEDB, gradient[i][2]);
-    delay(50);
+    delay(100);
   }
   for (int i = SAMPLE - 1; i >= 0; i--) {
     analogWrite(LEDR, gradient[i][0]);
     analogWrite(LEDG, gradient[i][1]);
     analogWrite(LEDB, gradient[i][2]);
-    delay(50);
+    delay(100);
   }
   Serial.println("ROLLING GRADIENT END...");
 }
@@ -238,10 +240,9 @@ void setFanSpeed() {
   Serial.println("SETTING FAN SPEED");
   int speed1 = ((fan[0] * 256) / 100 ) - 1;
   int speed2 = ((fan[1] * 256) / 100 ) - 1;
-  analogWrite(FAN1, speed1);
-  analogWrite(FAN2, speed2);
   fchange = false;
 }
 
 //*stat>temp:39,38,;load:17,4,42,;fans>50,50,;
 //*fans>10,10,;
+//*leds>1:122,152,255,12,10,0;
