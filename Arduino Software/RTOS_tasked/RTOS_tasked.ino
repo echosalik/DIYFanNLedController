@@ -1,3 +1,4 @@
+#include <ALib0.h>
 #include <LCD.h>
 #include <LiquidCrystal_SR.h>
 
@@ -22,19 +23,6 @@
 
 LiquidCrystal_SR lcd(LCD_DT, LCD_CK, LCD_EN);
 
-void setup() {
-  Serial.begin(57600);
-  Serial.println("System Started...");
-  Serial.println("Setting Pins...");
-  pinMode(FAN1, OUTPUT);
-  pinMode(FAN2, OUTPUT);
-  pinMode(LEDR, OUTPUT);
-  pinMode(LEDG, OUTPUT);
-  pinMode(LEDB, OUTPUT);
-  Serial.println("LCD Settings...");
-  lcd.begin(20, 4);
-}
-
 int led[2][6];
 int led_type = 0;
 int led_bright = 0;
@@ -46,21 +34,80 @@ int gradient[SAMPLE][3];
 bool fchange = false;
 bool lchange = false;
 
+void TaskPrintLCD();
+void TaskRGBCycle();
+void TaskFanSpeed();
+
+void setup() {
+  Serial.begin(57600);
+  Serial.println("System Started...");
+  Serial.println("Setting Pins...");
+  Serial.println("LCD Settings...");
+  pinMode(LEDR, OUTPUT);
+  pinMode(LEDG, OUTPUT);
+  pinMode(LEDB, OUTPUT);
+  pinMode(FAN1, OUTPUT);
+  pinMode(FAN2, OUTPUT);
+  lcd.begin(20, 4);
+}
+
 void loop() {
+  TaskPrintLCD();
+  TaskFanSpeed();
+  TaskRGBCycle();
+}
+
+void TaskPrintLCD() {
+  taskBegin();
   printCPUUsage(load[0]);
   printGPUUsage(load[1]);
   printRAMUsage(load[2]);
   printTemps(temp[0], temp[1]);
+  taskEnd();
+}
+
+void TaskFanSpeed() {
+  taskBegin();
   if (fchange) {
-    setFanSpeed();
+    Serial.println("SETTING FAN SPEED");
+    int speed1 = ((fan[0] * 256) / 100 ) - 1;
+    int speed2 = ((fan[1] * 256) / 100 ) - 1;
+    analogWrite(FAN1, speed1);
+    analogWrite(FAN2, speed2);
+    fchange = false;
   }
+  taskEnd();
+}
+
+void TaskRGBCycle() {
+  static int i;
+  taskBegin();
   if (led_type == 1) {
-    rollColor();
+    Serial.println("ROLLING GRADIENT START...");
+    for (i = 0; i < SAMPLE; i++) {
+      analogWrite(LEDR, gradient[i][0]);
+      analogWrite(LEDG, gradient[i][1]);
+      analogWrite(LEDB, gradient[i][2]);
+      taskDelay(100);
+    }
+    for (i = SAMPLE - 1; i >= 0; i--) {
+      analogWrite(LEDR, gradient[i][0]);
+      analogWrite(LEDG, gradient[i][1]);
+      analogWrite(LEDB, gradient[i][2]);
+      taskDelay(100);
+    }
+    Serial.println("ROLLING GRADIENT END...");
   } else {
-    analogWrite(LEDR, led_bright);
-    analogWrite(LEDG, 0);
-    analogWrite(LEDB, 0);
+    if(lchange){
+      Serial.println("SET BRIGHTNESS TO:");
+      Serial.println(led_bright);
+      analogWrite(LEDR, led_bright);
+      analogWrite(LEDG, 0);
+      analogWrite(LEDB, 0);
+      lchange = false;
+    }
   }
+  taskEnd();
 }
 
 void serialEvent() {
@@ -76,6 +123,8 @@ void serialEvent() {
       lchange = true;
       int type = Serial.readStringUntil(':').toInt();
       led_type = type;
+      Serial.println("LED TYPE");
+      Serial.println(type);
       if (type == 1) {
         for (int i = 0; i < 6; i++) {
           data = Serial.readStringUntil(',');
@@ -89,7 +138,11 @@ void serialEvent() {
         }
         generateGradient();
       } else {
-        led_bright = Serial.readStringUntil(',').toInt();
+        int b = Serial.readStringUntil(',').toInt();
+        Serial.println("LED Brightness: ");
+        Serial.println(b);
+        led_bright = ((b * 256) / 100 ) - 1;
+        Serial.println(led_bright);
       }
       Serial.readStringUntil(';');
     } else if (main == "fans") {
@@ -202,6 +255,7 @@ void printTemps(int cputemp, int gputemp) {
 }
 
 void generateGradient() {
+  taskBegin();
   Serial.println("GENERATING GRADIENT...");
   float m[3];
   int r, g, b;
@@ -218,32 +272,10 @@ void generateGradient() {
   }
   lchange = false;
   Serial.println("GRADIENT GENERATED...");
-}
-
-void rollColor() {
-  Serial.println("ROLLING GRADIENT START...");
-  for (int i = 0; i < SAMPLE; i++) {
-    analogWrite(LEDR, gradient[i][0]);
-    analogWrite(LEDG, gradient[i][1]);
-    analogWrite(LEDB, gradient[i][2]);
-    delay(100);
-  }
-  for (int i = SAMPLE - 1; i >= 0; i--) {
-    analogWrite(LEDR, gradient[i][0]);
-    analogWrite(LEDG, gradient[i][1]);
-    analogWrite(LEDB, gradient[i][2]);
-    delay(100);
-  }
-  Serial.println("ROLLING GRADIENT END...");
-}
-
-void setFanSpeed() {
-  Serial.println("SETTING FAN SPEED");
-  int speed1 = ((fan[0] * 256) / 100 ) - 1;
-  int speed2 = ((fan[1] * 256) / 100 ) - 1;
-  fchange = false;
+  taskEnd();
 }
 
 //*stat>temp:39,38,;load:17,4,42,;fans>50,50,;
 //*fans>10,10,;
 //*leds>1:122,152,255,12,10,0;
+//*leds>0:90,;
